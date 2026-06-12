@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MechConnect — Mobile Demo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --navy:#0D1B2A;
+    --blue:#1E7BF5;
+    --blue-light:#EBF4FF;
+    --orange:#FF6B35;
+    --orange-light:#FFF4EE;
+    --green:#22C55E;
+    --green-light:#EDFDF5;
+    --red:#EF4444;
+    --gray-50:#F8FAFC;
+    --gray-100:#F1F5F9;
+    --gray-200:#E2E8F0;
+    --gray-300:#CBD5E1;
+    --gray-400:#94A3B8;
+    --gray-500:#64748B;
+    --gray-700:#334155;
+    --gray-900:#0F172A;
+    --white:#FFFFFF;
+    --radius:14px;
+    --shadow:0 2px 16px rgba(0,0,0,.10);
+    --shadow-lg:0 8px 32px rgba(0,0,0,.15);
+  }
+
+  body{
+    font-family:'Inter',sans-serif;
+    background:#1a1a2e;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+
+  /* ── Phone shell ── */
+  .phone-shell{
+    width:390px;
+    height:844px;
+    background:var(--gray-50);
+    border-radius:50px;
+    box-shadow:0 0 0 10px #111,0 0 0 12px #333,var(--shadow-lg);
+    overflow:hidden;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Status bar */
+  .status-bar{
+    background:var(--navy);
+    padding:14px 28px 8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-shrink:0;
+  }
+  .status-time{font-size:15px;font-weight:700;color:white;}
+  .status-icons{display:flex;gap:6px;align-items:center;}
+  .status-icons svg{width:16px;height:16px;fill:white;}
+
+  /* Screen container */
+  .screens{flex:1;overflow:hidden;position:relative;}
+  .screen{
+    position:absolute;inset:0;
+    overflow-y:auto;
+    background:var(--gray-50);
+    transform:translateX(100%);
+    transition:transform .35s cubic-bezier(.4,0,.2,1);
+    scrollbar-width:none;
+  }
+  .screen::-webkit-scrollbar{display:none;}
+  .screen.active{transform:translateX(0);}
+  .screen.prev{transform:translateX(-100%);}
+
+  /* Bottom nav */
+  .bottom-nav{
+    background:var(--white);
+    border-top:1px solid var(--gray-200);
+    display:flex;
+    padding:8px 0 20px;
+    flex-shrink:0;
+  }
+  .nav-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    cursor:pointer;padding:4px 0;
+  }
+  .nav-item svg{width:22px;height:22px;fill:var(--gray-400);transition:.2s;}
+  .nav-item span{font-size:10px;color:var(--gray-400);font-weight:500;transition:.2s;}
+  .nav-item.active svg{fill:var(--blue);}
+  .nav-item.active span{color:var(--blue);}
+
+  /* ── Shared components ── */
+  .screen-header{
+    background:var(--navy);
+    padding:18px 20px 20px;
+    color:white;
+  }
+  .screen-header h1{font-size:22px;font-weight:800;}
+  .screen-header p{font-size:13px;color:#94B8D8;margin-top:3px;}
+
+  .back-header{
+    background:var(--white);
+    padding:16px 20px;
+    display:flex;align-items:center;gap:12px;
+    border-bottom:1px solid var(--gray-200);
+    position:sticky;top:0;z-index:10;
+  }
+  .back-btn{
+    width:36px;height:36px;border-radius:50%;
+    background:var(--gray-100);border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .back-header h2{font-size:17px;font-weight:700;color:var(--gray-900);}
+
+  .card{
+    background:var(--white);border-radius:var(--radius);
+    box-shadow:var(--shadow);margin:0 16px 12px;
+    overflow:hidden;
+  }
+  .card-body{padding:16px;}
+
+  .btn{
+    display:block;width:100%;padding:15px;
+    border-radius:12px;border:none;cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:15px;font-weight:700;
+    transition:.2s;text-align:center;
+  }
+  .btn-primary{background:var(--blue);color:white;}
+  .btn-primary:active{background:#1668D4;transform:scale(.98);}
+  .btn-outline{background:transparent;color:var(--blue);border:1.5px solid var(--blue);}
+  .btn-orange{background:var(--orange);color:white;}
+  .btn-green{background:var(--green);color:white;}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:4px;
+    padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  }
+  .badge-blue{background:var(--blue-light);color:var(--blue);}
+  .badge-green{background:var(--green-light);color:var(--green);}
+  .badge-orange{background:var(--orange-light);color:var(--orange);}
+
+  .section-title{
+    font-size:13px;font-weight:700;color:var(--gray-500);
+    text-transform:uppercase;letter-spacing:.06em;
+    padding:16px 20px 8px;
+  }
+
+  .row{display:flex;align-items:center;gap:12px;}
+  .row-between{display:flex;align-items:center;justify-content:space-between;}
+
+  /* ── SCREEN 1: Home ── */
+  #s-home .hero{
+    background:linear-gradient(135deg,var(--navy) 0%,#1a3a5c 100%);
+    padding:20px 20px 28px;
+  }
+  #s-home .hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  #s-home .logo{font-size:20px;font-weight:800;color:white;letter-spacing:-.3px;}
+  #s-home .logo span{color:var(--orange);}
+  #s-home .avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;}
+  #s-home .hero h2{font-size:24px;font-weight:800;color:white;line-height:1.25;}
+  #s-home .hero h2 span{color:#5DB8FF;}
+  #s-home .hero p{font-size:13px;color:#94B8D8;margin-top:6px;}
+  #s-home .search-bar{
+    margin:16px 0 0;background:rgba(255,255,255,.12);
+    border-radius:12px;padding:12px 16px;
+    display:flex;align-items:center;gap:10px;
+    border:1px solid rgba(255,255,255,.1);cursor:pointer;
+  }
+  #s-home .search-bar span{color:rgba(255,255,255,.5);font-size:14px;}
+  #s-home .quick-actions{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+    padding:16px 16px 4px;
+  }
+  .qa-item{
+    background:var(--white);border-radius:12px;padding:12px 6px;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    cursor:pointer;box-shadow:var(--shadow);transition:.2s;
+  }
+  .qa-item:active{transform:scale(.95);}
+  .qa-icon{font-size:22px;}
+  .qa-label{font-size:10px;font-weight:600;color:var(--gray-700);text-align:center;}
+  .promo-banner{
+    margin:4px 16px 4px;border-radius:var(--radius);
+    background:linear-gradient(135deg,#FF6B35,#FF8F5E);
+    padding:14px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;
+  }
+  .promo-banner .promo-text h3{font-size:14px;font-weight:700;color:white;}
+  .promo-banner .promo-text p{font-size:11px;color:rgba(255,255,255,.8);margin-top:2px;}
+  .promo-banner .promo-icon{font-size:32px;}
+  .mechanic-card{
+    display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;
+    border-bottom:1px solid var(--gray-100);
+  }
+  .mechanic-card:last-child{border-bottom:none;}
+  .mech-avatar{
+    width:48px;height:48px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;font-weight:700;color:white;flex-shrink:0;
+  }
+  .mech-info{flex:1;}
+  .mech-info h4{font-size:14px;font-weight:700;color:var(--gray-900);}
+  .mech-info p{font-size:12px;color:var(--gray-500);margin-top:2px;}
+  .mech-meta{display:flex;gap:6px;margin-top:5px;align-items:center;}
+  .stars{font-size:11px;color:#F59E0B;}
+  .mech-price{font-size:15px;font-weight:700;color:var(--blue);}
+
+  /* ── SCREEN 2: Book ── */
+  #s-book .step-bar{
+    display:flex;align-items:center;padding:16px 20px;gap:0;
+  }
+  .step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray-300);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;color:var(--gray-400);flex-shrink:0;}
+  .step-dot.done{background:var(--blue);border-color:var(--blue);color:white;}
+  .step-dot.active{background:var(--white);border-color:var(--blue);color:var(--blue);}
+  .step-line{flex:1;height:2px;background:var(--gray-200);}
+  .step-line.done{background:var(--blue);}
+  .vin-input{
+    background:var(--gray-100);border:1.5px solid var(--gray-200);
+    border-radius:10px;padding:12px 14px;font-family:'Inter',sans-serif;
+    font-size:14px;width:100%;outline:none;transition:.2s;
+  }
+  .vin-input:focus{border-color:var(--blue);background:var(--white);}
+  .or-divider{text-align:center;color:var(--gray-400);font-size:12px;margin:10px 0;position:relative;}
+  .or-divider::before,.or-divider::after{
+    content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--gray-200);
+  }
+  .or-divider::before{left:0;} .or-divider::after{right:0;}
+  .select-row{display:flex;gap:8px;}
+  .select-box{
+    flex:1;background:var(--gray-100);border:1.5px solid var(--gray-200);
+    border-radius:10px;padding:11px 12px;font-family:'Inter',sans-serif;
+    font-size:13px;outline:none;appearance:none;cursor:pointer;
+  }
+  .service-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+    padding:0 16px 16px;
+  }
+  .service-chip{
+    background:var(--white);border:1.5px solid var(--gray-200);
+    border-radius:12px;padding:12px 6px;text-align:center;cursor:pointer;
+    transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,.06);
+  }
+  .service-chip:active,.service-chip.sel{
+    border-color:var(--blue);background:var(--blue-light);
+  }
+  .service-chip .svc-icon{font-size:22px;display:block;margin-bottom:5px;}
+  .service-chip .svc-name{font-size:11px;font-weight:600;color:var(--gray-700);}
+  .service-chip.sel .svc-name{color:var(--blue);}
+  .upload-zone{
+    border:2px dashed var(--gray-300);border-radius:12px;
+    padding:24px;text-align:center;cursor:pointer;margin:0 16px;
+    background:var(--gray-50);transition:.2s;
+  }
+  .upload-zone:active{border-color:var(--blue);background:var(--blue-light);}
+  .upload-zone .up-icon{font-size:28px;display:block;margin-bottom:6px;}
+  .upload-zone p{font-size:13px;color:var(--gray-500);}
+  .upload-zone span{font-size:12px;color:var(--gray-400);}
+
+  /* ── SCREEN 3: Mechanics map ── */
+  #s-mechanics .map-view{
+    height:220px;background:linear-gradient(180deg,#e8f4f8 0%,#d0e8f0 100%);
+    position:relative;overflow:hidden;
+  }
+  .map-grid{
+    position:absolute;inset:0;
+    background-image:linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);
+    background-size:30px 30px;
+  }
+  .map-road-h{position:absolute;height:3px;background:rgba(255,255,255,.8);left:0;right:0;}
+  .map-road-v{position:absolute;width:3px;background:rgba(255,255,255,.8);top:0;bottom:0;}
+  .map-pin{
+    position:absolute;cursor:pointer;transform:translate(-50%,-100%);
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .pin-bubble{
+    background:var(--blue);color:white;border-radius:20px;
+    padding:5px 10px;font-size:11px;font-weight:700;
+    box-shadow:0 3px 10px rgba(30,123,245,.4);white-space:nowrap;
+  }
+  .pin-bubble.orange{background:var(--orange);box-shadow:0 3px 10px rgba(255,107,53,.4);}
+  .pin-bubble.green{background:var(--green);box-shadow:0 3px 10px rgba(34,197,94,.4);}
+  .pin-tail{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:8px solid var(--blue);}
+  .pin-tail.orange{border-top-color:var(--orange);}
+  .pin-tail.green{border-top-color:var(--green);}
+  .you-dot{
+    position:absolute;width:14px;height:14px;background:var(--blue);
+    border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px rgba(30,123,245,.25);
+    transform:translate(-50%,-50%);
+  }
+  .filter-row{
+    display:flex;gap:8px;padding:12px 16px;overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .filter-chip{
+    background:var(--white);border:1.5px solid var(--gray-200);
+    border-radius:20px;padding:6px 14px;font-size:12px;font-weight:600;
+    color:var(--gray-600);white-space:nowrap;cursor:pointer;flex-shrink:0;
+    transition:.2s;
+  }
+  .filter-chip.active{background:var(--blue);border-color:var(--blue);color:white;}
+  .mech-list-item{
+    display:flex;gap:12px;padding:14px 16px;
+    border-bottom:1px solid var(--gray-100);cursor:pointer;
+    background:var(--white);transition:.15s;
+  }
+  .mech-list-item:active{background:var(--blue-light);}
+  .mech-list-item:last-child{border-bottom:none;}
+  .avail-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:6px;}
+
+  /* ── SCREEN 4: Mechanic profile ── */
+  #s-profile .profile-hero{
+    background:linear-gradient(135deg,var(--navy),#1a3a5c);
+    padding:20px;text-align:center;
+  }
+  .profile-avatar{
+    width:80px;height:80px;border-radius:50%;
+    background:linear-gradient(135deg,#FF6B35,#FF9A6C);
+    display:flex;align-items:center;justify-content:center;
+    font-size:32px;font-weight:800;color:white;margin:0 auto 12px;
+    border:3px solid rgba(255,255,255,.3);
+  }
+  .profile-hero h2{font-size:20px;font-weight:800;color:white;}
+  .profile-hero .rating-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;}
+  .rating-row .stars-lg{font-size:16px;color:#F59E0B;}
+  .rating-row span{font-size:13px;color:rgba(255,255,255,.7);}
+  .stat-row{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    background:rgba(255,255,255,.08);border-radius:12px;
+    margin:14px 0 0;overflow:hidden;
+  }
+  .stat-item{padding:10px;text-align:center;border-right:1px solid rgba(255,255,255,.1);}
+  .stat-item:last-child{border-right:none;}
+  .stat-item .val{font-size:16px;font-weight:800;color:white;}
+  .stat-item .lbl{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;}
+  .skills-row{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px 4px;}
+  .skill-tag{
+    background:var(--blue-light);color:var(--blue);
+    border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;
+  }
+  .review-item{padding:14px 16px;border-bottom:1px solid var(--gray-100);}
+  .review-item:last-child{border-bottom:none;}
+  .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .reviewer{font-size:13px;font-weight:600;color:var(--gray-900);}
+  .review-stars{font-size:12px;color:#F59E0B;}
+  .review-text{font-size:13px;color:var(--gray-500);line-height:1.5;}
+  .pricing-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:12px 16px;border-bottom:1px solid var(--gray-100);
+  }
+  .pricing-row .service-name{font-size:14px;font-weight:500;color:var(--gray-700);}
+  .pricing-row .price-val{font-size:14px;font-weight:700;color:var(--gray-900);}
+  .book-footer{
+    background:var(--white);border-top:1px solid var(--gray-200);
+    padding:14px 16px 20px;display:flex;gap:10px;align-items:center;
+  }
+  .price-tag{font-size:22px;font-weight:800;color:var(--gray-900);}
+  .price-tag small{font-size:12px;font-weight:400;color:var(--gray-400);}
+
+  /* ── SCREEN 5: Tracking ── */
+  #s-tracking .track-map{
+    height:260px;background:linear-gradient(180deg,#e0eff9 0%,#c8dff0 100%);
+    position:relative;overflow:hidden;
+  }
+  .route-line{
+    position:absolute;left:50%;top:30%;
+    width:3px;height:50%;background:var(--blue);
+    transform:rotate(15deg);transform-origin:top center;opacity:.5;
+  }
+  .route-line::after{
+    content:'';position:absolute;top:0;left:-3px;right:-3px;bottom:0;
+    background:var(--blue);filter:blur(3px);opacity:.3;
+  }
+  .tracking-card{
+    margin:-24px 16px 0;position:relative;z-index:5;
+    background:var(--white);border-radius:var(--radius);
+    box-shadow:var(--shadow-lg);padding:16px;
+  }
+  .progress-track{
+    height:4px;background:var(--gray-200);border-radius:4px;margin:12px 0;overflow:hidden;
+  }
+  .progress-fill{height:100%;background:var(--blue);border-radius:4px;animation:prog 3s ease-in-out infinite alternate;}
+  @keyframes prog{from{width:45%;}to{width:75%;}}
+  .eta-big{font-size:28px;font-weight:800;color:var(--navy);}
+  .eta-lbl{font-size:12px;color:var(--gray-500);margin-top:2px;}
+  .action-pills{display:flex;gap:8px;margin-top:14px;}
+  .pill{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+    background:var(--gray-100);border-radius:10px;padding:11px;
+    font-size:13px;font-weight:600;color:var(--gray-700);cursor:pointer;border:none;
+    font-family:'Inter',sans-serif;transition:.15s;
+  }
+  .pill:active{background:var(--blue-light);color:var(--blue);}
+  .pill svg{width:18px;height:18px;}
+
+  /* ── SCREEN 6: Payment ── */
+  .order-summary .line{
+    display:flex;justify-content:space-between;
+    padding:10px 16px;border-bottom:1px solid var(--gray-100);
+    font-size:14px;color:var(--gray-700);
+  }
+  .order-summary .line strong{color:var(--gray-900);}
+  .order-summary .total-line{
+    display:flex;justify-content:space-between;
+    padding:14px 16px;font-size:16px;font-weight:700;color:var(--gray-900);
+  }
+  .payment-method{
+    display:flex;align-items:center;gap:12px;padding:14px 16px;
+    cursor:pointer;border-bottom:1px solid var(--gray-100);
+  }
+  .pm-icon{
+    width:44px;height:30px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;border:1px solid var(--gray-200);background:var(--white);
+  }
+  .pm-info{flex:1;}
+  .pm-info h4{font-size:14px;font-weight:600;color:var(--gray-900);}
+  .pm-info p{font-size:12px;color:var(--gray-500);}
+  .radio-dot{
+    width:20px;height:20px;border-radius:50%;border:2px solid var(--blue);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .radio-dot::after{
+    content:'';width:10px;height:10px;border-radius:50%;background:var(--blue);
+  }
+
+  /* ── SCREEN 7: Rating ── */
+  #s-rating .success-banner{
+    background:linear-gradient(135deg,var(--green),#16A34A);
+    padding:28px 20px;text-align:center;
+  }
+  #s-rating .success-banner .check{font-size:48px;display:block;margin-bottom:10px;}
+  #s-rating .success-banner h2{font-size:22px;font-weight:800;color:white;}
+  #s-rating .success-banner p{font-size:13px;color:rgba(255,255,255,.8);margin-top:4px;}
+  .star-rating{display:flex;justify-content:center;gap:10px;padding:16px 0 8px;}
+  .star-btn{font-size:36px;cursor:pointer;transition:.2s;filter:grayscale(1)opacity(.4);}
+  .star-btn.lit{filter:none;}
+  .star-btn:active{transform:scale(1.2);}
+  .review-input{
+    width:100%;border:1.5px solid var(--gray-200);border-radius:10px;
+    padding:12px;font-family:'Inter',sans-serif;font-size:14px;
+    color:var(--gray-700);resize:none;outline:none;height:80px;
+  }
+  .review-input:focus{border-color:var(--blue);}
+
+  /* ── Notification toast ── */
+  .toast{
+    position:absolute;top:12px;left:12px;right:12px;
+    background:var(--gray-900);color:white;border-radius:12px;
+    padding:12px 14px;z-index:100;
+    display:flex;align-items:center;gap:10px;
+    font-size:13px;box-shadow:var(--shadow-lg);
+    transform:translateY(-80px);transition:.4s cubic-bezier(.4,0,.2,1);
+    pointer-events:none;
+  }
+  .toast.show{transform:translateY(0);}
+  .toast-icon{font-size:20px;}
+
+  /* ── Pulse animation ── */
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+  .live-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--green);
+    animation:pulse 1.5s infinite;display:inline-block;margin-right:4px;
+  }
+
+  /* ── Responsive desktop ── */
+  @media(max-width:440px){
+    body{padding:0;}
+    .phone-shell{width:100vw;height:100vh;border-radius:0;box-shadow:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="phone-shell">
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg viewBox="0 0 24 24"><path d="M1.5 8.5a13 13 0 0121 0M5 12a10 10 0 0114 0M8.5 15.5a6 6 0 017 0M12 19h.01"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7z"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v4"/></svg>
+    </div>
+  </div>
+
+  <!-- ══ SCREENS ══ -->
+  <div class="screens">
+
+    <!-- ─ S0: Splash ─ -->
+    <div class="screen active" id="s-splash">
+      <div style="height:100%;background:linear-gradient(160deg,#0D1B2A 0%,#1a3a5c 60%,#0D2A40 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;">
+        <div style="font-size:52px;margin-bottom:12px;">🔧</div>
+        <div style="font-size:34px;font-weight:800;color:white;letter-spacing:-.5px;">Mech<span style="color:#FF6B35;">Connect</span></div>
+        <p style="font-size:15px;color:#94B8D8;margin-top:8px;text-align:center;line-height:1.5;">Your mechanic, wherever you are.<br/>Fix it today.</p>
+        <div style="width:100%;margin-top:48px;display:flex;flex-direction:column;gap:10px;">
+          <button class="btn btn-primary" onclick="goTo('s-home','s-splash')">Get Started</button>
+          <button class="btn btn-outline" style="border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8);" onclick="goTo('s-home','s-splash')">Log In</button>
+        </div>
+        <p style="font-size:11px;color:rgba(255,255,255,.3);margin-top:20px;">Rated #1 Mobile Mechanic App · 50k+ Jobs Done</p>
+      </div>
+    </div>
+
+    <!-- ─ S1: Home ─ -->
+    <div class="screen" id="s-home">
+      <div class="hero">
+        <div class="hero-top">
+          <div class="logo">Mech<span>Connect</span></div>
+          <div class="avatar">JD</div>
+        </div>
+        <h2>Good morning,<br/><span>John</span> 👋</h2>
+        <p>📍 Karachi, Sindh &nbsp;·&nbsp; 8 mechanics nearby</p>
+        <div class="search-bar" onclick="goTo('s-book','s-home')">
+          <span>🔍</span>
+          <span>What does your car need?</span>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="qa-item" onclick="goTo('s-book','s-home')"><span class="qa-icon">🛢️</span><span class="qa-label">Oil Change</span></div>
+        <div class="qa-item" onclick="goTo('s-book','s-home')"><span class="qa-icon">🔋</span><span class="qa-label">Battery</span></div>
+        <div class="qa-item" onclick="goTo('s-book','s-home')"><span class="qa-icon">🛑</span><span class="qa-label">Brakes</span></div>
+        <div class="qa-item" onclick="goTo('s-book','s-home')"><span class="qa-icon">🔌</span><span class="qa-label">Diagnostics</span></div>
+      </div>
+
+      <div class="promo-banner" onclick="showToast('🎉','25% off your first booking — code FIRST25 applied!')">
+        <div class="promo-text">
+          <h3>First booking? 25% off!</h3>
+          <p>Code FIRST25 · Tap to apply</p>
+        </div>
+        <span class="promo-icon">🎁</span>
+      </div>
+
+      <p class="section-title">Nearby Mechanics</p>
+
+      <div class="card">
+        <div class="mechanic-card" onclick="goTo('s-profile','s-home')">
+          <div class="mech-avatar" style="background:linear-gradient(135deg,#FF6B35,#FF9A6C);">AK</div>
+          <div class="mech-info">
+            <h4>Ahmed Khan</h4>
+            <p>Master Technician · 1.2 km away</p>
+            <div class="mech-meta">
+              <span class="stars">★★★★★</span>
+              <span style="font-size:11px;color:var(--gray-500);">4.9 (312 reviews)</span>
+              <span class="badge badge-green"><span class="live-dot"></span>Online</span>
+            </div>
+          </div>
+          <div class="mech-price">$45/hr</div>
+        </div>
+        <div class="mechanic-card" onclick="goTo('s-profile','s-home')">
+          <div class="mech-avatar" style="background:linear-gradient(135deg,#1E7BF5,#60B0FF);">RS</div>
+          <div class="mech-info">
+            <h4>Raza Sheikh</h4>
+            <p>Brake & Engine Specialist · 2.4 km</p>
+            <div class="mech-meta">
+              <span class="stars">★★★★☆</span>
+              <span style="font-size:11px;color:var(--gray-500);">4.7 (189 reviews)</span>
+              <span class="badge badge-blue">Busy (30 min)</span>
+            </div>
+          </div>
+          <div class="mech-price">$40/hr</div>
+        </div>
+        <div class="mechanic-card" onclick="goTo('s-profile','s-home')">
+          <div class="mech-avatar" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);">FM</div>
+          <div class="mech-info">
+            <h4>Fahad Mirza</h4>
+            <p>Electrical & Diagnostics · 3.1 km</p>
+            <div class="mech-meta">
+              <span class="stars">★★★★★</span>
+              <span style="font-size:11px;color:var(--gray-500);">4.8 (95 reviews)</span>
+              <span class="badge badge-green"><span class="live-dot"></span>Online</span>
+            </div>
+          </div>
+          <div class="mech-price">$50/hr</div>
+        </div>
+      </div>
+      <div style="height:12px;"></div>
+    </div>
+
+    <!-- ─ S2: Book / Service ─ -->
+    <div class="screen" id="s-book">
+      <div class="back-header">
+        <button class="back-btn" onclick="goBack('s-home')">←</button>
+        <h2>Book a Service</h2>
+      </div>
+
+      <div class="step-bar">
+        <div class="step-dot done">✓</div>
+        <div class="step-line done"></div>
+        <div class="step-dot active">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot">3</div>
+        <div class="step-line"></div>
+        <div class="step-dot">4</div>
+      </div>
+
+      <p class="section-title">Your Vehicle</p>
+      <div class="card-body" style="margin:0 16px;background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;">
+        <input class="vin-input" placeholder="Enter VIN number" style="margin-bottom:8px;" value="1HGBH41JXMN109186"/>
+        <div class="or-divider">or enter manually</div>
+        <div class="select-row" style="margin-top:8px;">
+          <select class="select-box"><option>2021</option><option>2022</option><option>2020</option></select>
+          <select class="select-box"><option>Toyota</option><option>Honda</option><option>Suzuki</option></select>
+          <select class="select-box"><option>Corolla</option><option>Civic</option><option>Alto</option></select>
+        </div>
+      </div>
+
+      <p class="section-title">Select Service</p>
+      <div class="service-grid">
+        <div class="service-chip sel" onclick="selService(this)"><span class="svc-icon">🛢️</span><span class="svc-name">Oil Change</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">🛑</span><span class="svc-name">Brakes</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">🔋</span><span class="svc-name">Battery</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">⚡</span><span class="svc-name">Alternator</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">🔌</span><span class="svc-name">Diagnostics</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">❄️</span><span class="svc-name">AC Repair</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">🔧</span><span class="svc-name">Engine</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">🚗</span><span class="svc-name">Tyres</span></div>
+        <div class="service-chip" onclick="selService(this)"><span class="svc-icon">💡</span><span class="svc-name">Lights</span></div>
+      </div>
+
+      <p class="section-title">Upload Photos / Video</p>
+      <div class="upload-zone" onclick="showToast('📷','Upload feature — select from camera or gallery')">
+        <span class="up-icon">📸</span>
+        <p>Tap to add photos or video</p>
+        <span>JPG, PNG, MP4 · max 50MB each</span>
+      </div>
+
+      <div style="padding:16px;">
+        <button class="btn btn-primary" onclick="goTo('s-mechanics','s-book')">Find Available Mechanics →</button>
+      </div>
+    </div>
+
+    <!-- ─ S3: Mechanics Near ─ -->
+    <div class="screen" id="s-mechanics">
+      <div class="back-header">
+        <button class="back-btn" onclick="goBack('s-book')">←</button>
+        <h2>Nearby Mechanics</h2>
+      </div>
+
+      <div class="map-view">
+        <div class="map-grid"></div>
+        <div class="map-road-h" style="top:35%;"></div>
+        <div class="map-road-h" style="top:65%;"></div>
+        <div class="map-road-v" style="left:40%;"></div>
+        <div class="map-road-v" style="left:70%;"></div>
+        <div class="you-dot" style="left:40%;top:50%;"></div>
+        <div class="map-pin" style="left:28%;top:38%;" onclick="goTo('s-profile','s-mechanics')">
+          <div class="pin-bubble orange">Ahmed · 1.2km</div>
+          <div class="pin-tail orange"></div>
+        </div>
+        <div class="map-pin" style="left:62%;top:55%;" onclick="goTo('s-profile','s-mechanics')">
+          <div class="pin-bubble">Raza · 2.4km</div>
+          <div class="pin-tail"></div>
+        </div>
+        <div class="map-pin" style="left:75%;top:30%;" onclick="goTo('s-profile','s-mechanics')">
+          <div class="pin-bubble green">Fahad · 3.1km</div>
+          <div class="pin-tail green"></div>
+        </div>
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-chip active">All</div>
+        <div class="filter-chip" onclick="activateChip(this)">Available Now</div>
+        <div class="filter-chip" onclick="activateChip(this)">Highest Rated</div>
+        <div class="filter-chip" onclick="activateChip(this)">Nearest</div>
+        <div class="filter-chip" onclick="activateChip(this)">Best Price</div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px;">
+        <div class="mech-list-item" onclick="goTo('s-profile','s-mechanics')">
+          <div class="avail-dot"></div>
+          <div class="mech-avatar" style="background:linear-gradient(135deg,#FF6B35,#FF9A6C);width:44px;height:44px;font-size:17px;">AK</div>
+          <div class="mech-info" style="flex:1;">
+            <div class="row-between">
+              <h4 style="font-size:14px;font-weight:700;color:var(--gray-900);">Ahmed Khan</h4>
+              <span style="font-size:14px;font-weight:700;color:var(--blue);">$45</span>
+            </div>
+            <p style="font-size:12px;color:var(--gray-500);margin-top:2px;">1.2 km · ~8 min away</p>
+            <div style="display:flex;gap:4px;align-items:center;margin-top:4px;">
+              <span style="font-size:11px;color:#F59E0B;">★★★★★</span>
+              <span style="font-size:11px;color:var(--gray-400);">4.9 · Oil Change expert</span>
+            </div>
+          </div>
+        </div>
+        <div class="mech-list-item" onclick="goTo('s-profile','s-mechanics')">
+          <div class="avail-dot" style="background:var(--orange);"></div>
+          <div class="mech-avatar" style="background:linear-gradient(135deg,#1E7BF5,#60B0FF);width:44px;height:44px;font-size:17px;">RS</div>
+          <div class="mech-info" style="flex:1;">
+            <div class="row-between">
+              <h4 style="font-size:14px;font-weight:700;">Raza Sheikh</h4>
+              <span style="font-size:14px;font-weight:700;color:var(--blue);">$40</span>
+            </div>
+            <p style="font-size:12px;color:var(--gray-500);margin-top:2px;">2.4 km · Available in 30 min</p>
+            <div style="display:flex;gap:4px;align-items:center;margin-top:4px;">
+              <span style="font-size:11px;color:#F59E0B;">★★★★☆</span>
+              <span style="font-size:11px;color:var(--gray-400);">4.7 · Brakes specialist</span>
+            </div>
+          </div>
+        </div>
+        <div class="mech-list-item" onclick="goTo('s-profile','s-mechanics')">
+          <div class="avail-dot"></div>
+          <div class="mech-avatar" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);width:44px;height:44px;font-size:17px;">FM</div>
+          <div class="mech-info" style="flex:1;">
+            <div class="row-between">
+              <h4 style="font-size:14px;font-weight:700;">Fahad Mirza</h4>
+              <span style="font-size:14px;font-weight:700;color:var(--blue);">$50</span>
+            </div>
+            <p style="font-size:12px;color:var(--gray-500);margin-top:2px;">3.1 km · ~12 min away</p>
+            <div style="display:flex;gap:4px;align-items:center;margin-top:4px;">
+              <span style="font-size:11px;color:#F59E0B;">★★★★★</span>
+              <span style="font-size:11px;color:var(--gray-400);">4.8 · Electrical & diagnostics</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ S4: Mechanic Profile ─ -->
+    <div class="screen" id="s-profile">
+      <div style="position:sticky;top:0;z-index:10;background:var(--navy);padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <button class="back-btn" style="background:rgba(255,255,255,.12);border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;" onclick="goBack('s-mechanics')">←</button>
+        <span style="font-size:16px;font-weight:700;color:white;">Mechanic Profile</span>
+      </div>
+
+      <div class="profile-hero">
+        <div class="profile-avatar">AK</div>
+        <h2>Ahmed Khan</h2>
+        <div class="rating-row">
+          <span class="stars-lg">★★★★★</span>
+          <span>4.9 · 312 reviews</span>
+          <span class="badge badge-green" style="margin-left:4px;"><span class="live-dot"></span>Online now</span>
+        </div>
+        <div class="stat-row">
+          <div class="stat-item"><div class="val">1,240+</div><div class="lbl">Jobs Done</div></div>
+          <div class="stat-item"><div class="val">8 yrs</div><div class="lbl">Experience</div></div>
+          <div class="stat-item"><div class="val">1.2 km</div><div class="lbl">Away</div></div>
+        </div>
+      </div>
+
+      <div class="skills-row">
+        <span class="skill-tag">Oil Change</span>
+        <span class="skill-tag">Brakes</span>
+        <span class="skill-tag">Engine Repair</span>
+        <span class="skill-tag">Battery</span>
+        <span class="skill-tag">Tyres</span>
+        <span class="skill-tag">Suspension</span>
+      </div>
+
+      <p class="section-title">Upfront Pricing</p>
+      <div class="card" style="margin-bottom:4px;">
+        <div class="pricing-row"><span class="service-name">Oil Change (synthetic)</span><span class="price-val">$55</span></div>
+        <div class="pricing-row"><span class="service-name">Brake Pad Replacement</span><span class="price-val">$95</span></div>
+        <div class="pricing-row"><span class="service-name">Battery Replacement</span><span class="price-val">$80</span></div>
+        <div class="pricing-row"><span class="service-name">Full Diagnostics</span><span class="price-val">$45</span></div>
+        <div class="pricing-row" style="border:none;"><span class="service-name" style="color:var(--blue);font-weight:600;">+ Request Custom Quote</span><span>→</span></div>
+      </div>
+
+      <p class="section-title">Recent Reviews</p>
+      <div class="card" style="margin-bottom:80px;">
+        <div class="review-item">
+          <div class="review-header"><span class="reviewer">Sara M.</span><span class="review-stars">★★★★★</span></div>
+          <p class="review-text">Ahmed arrived in 10 minutes and fixed my oil change perfectly. Very professional and clean!</p>
+        </div>
+        <div class="review-item">
+          <div class="review-header"><span class="reviewer">Bilal K.</span><span class="review-stars">★★★★★</span></div>
+          <p class="review-text">Best experience ever. He diagnosed my engine issue in 20 mins that a shop couldn't find for days.</p>
+        </div>
+        <div class="review-item" style="border:none;">
+          <div class="review-header"><span class="reviewer">Nadia R.</span><span class="review-stars">★★★★☆</span></div>
+          <p class="review-text">Great service, reasonable price. Will definitely book again.</p>
+        </div>
+      </div>
+
+      <div class="book-footer" style="position:sticky;bottom:0;">
+        <div style="flex:1;">
+          <div class="price-tag">$55 <small>Oil Change</small></div>
+          <p style="font-size:11px;color:var(--gray-400);">Est. 45 min · Parts included</p>
+        </div>
+        <button class="btn btn-primary" style="width:auto;padding:14px 24px;" onclick="goTo('s-payment','s-profile')">Book Now</button>
+      </div>
+    </div>
+
+    <!-- ─ S5: Tracking ─ -->
+    <div class="screen" id="s-tracking">
+      <div class="back-header">
+        <button class="back-btn" onclick="goBack('s-payment')">←</button>
+        <h2>Live Tracking</h2>
+        <span class="badge badge-green" style="margin-left:auto;"><span class="live-dot"></span>Live</span>
+      </div>
+
+      <div class="track-map">
+        <div class="map-grid"></div>
+        <div class="map-road-h" style="top:55%;"></div>
+        <div class="map-road-v" style="left:50%;"></div>
+        <div class="route-line"></div>
+        <div class="you-dot" style="left:50%;top:65%;"></div>
+        <div class="map-pin" style="left:42%;top:28%;" onclick="showToast('🔧','Ahmed is on his way to you — 8 min ETA')">
+          <div class="pin-bubble orange">Ahmed 🔧</div>
+          <div class="pin-tail orange"></div>
+        </div>
+      </div>
+
+      <div class="tracking-card">
+        <div class="row-between">
+          <div>
+            <div class="eta-big">8 min</div>
+            <div class="eta-lbl">Estimated arrival time</div>
+          </div>
+          <div class="mech-avatar" style="background:linear-gradient(135deg,#FF6B35,#FF9A6C);width:52px;height:52px;">AK</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+        <div class="row-between" style="font-size:12px;color:var(--gray-400);">
+          <span>Dispatched</span><span>En Route</span><span>Arrived</span><span>Job Done</span>
+        </div>
+
+        <div class="action-pills" style="margin-top:14px;">
+          <button class="pill" onclick="showToast('💬','Opening chat with Ahmed...')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            Message
+          </button>
+          <button class="pill" onclick="showToast('📞','Calling Ahmed (masked number)...')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.79 19.79 0 013.09 4.18 2 2 0 015.09 2h3a2 2 0 012 1.72 12.05 12.05 0 00.57 2.57 2 2 0 01-.45 2.11L9.09 9.91a16 16 0 006 6l1.51-1.51a2 2 0 012.11-.45 12 12 0 002.57.57A2 2 0 0122 16.92z"/></svg>
+            Call
+          </button>
+          <button class="pill" onclick="showToast('🗺️','Opening full map view...')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            Navigate
+          </button>
+        </div>
+      </div>
+
+      <p class="section-title">Job Details</p>
+      <div class="card">
+        <div style="padding:14px 16px;">
+          <div class="row-between" style="margin-bottom:8px;">
+            <span style="font-size:14px;color:var(--gray-500);">Service</span>
+            <span style="font-size:14px;font-weight:600;">Oil Change (Synthetic)</span>
+          </div>
+          <div class="row-between" style="margin-bottom:8px;">
+            <span style="font-size:14px;color:var(--gray-500);">Vehicle</span>
+            <span style="font-size:14px;font-weight:600;">2021 Toyota Corolla</span>
+          </div>
+          <div class="row-between">
+            <span style="font-size:14px;color:var(--gray-500);">Total Paid</span>
+            <span style="font-size:14px;font-weight:700;color:var(--green);">$55 ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px;margin-bottom:8px;">
+        <button class="btn btn-green" onclick="goTo('s-rating','s-tracking')">Job Complete — Rate Ahmed</button>
+      </div>
+    </div>
+
+    <!-- ─ S6: Payment ─ -->
+    <div class="screen" id="s-payment">
+      <div class="back-header">
+        <button class="back-btn" onclick="goBack('s-profile')">←</button>
+        <h2>Secure Checkout</h2>
+      </div>
+
+      <p class="section-title">Order Summary</p>
+      <div class="card order-summary">
+        <div class="line"><span>Oil Change (Synthetic)</span><strong>$55.00</strong></div>
+        <div class="line"><span>Service Fee</span><strong>$3.50</strong></div>
+        <div class="line"><span>Promo FIRST25</span><strong style="color:var(--green);">−$13.75</strong></div>
+        <div class="total-line"><span>Total</span><span style="color:var(--blue);">$44.75</span></div>
+      </div>
+
+      <p class="section-title">Payment Method</p>
+      <div class="card">
+        <div class="payment-method">
+          <div class="pm-icon">💳</div>
+          <div class="pm-info"><h4>Visa •••• 4242</h4><p>Expires 12/26</p></div>
+          <div class="radio-dot"></div>
+        </div>
+        <div class="payment-method" style="border:none;" onclick="showToast('📱','Apple Pay / Google Pay selected')">
+          <div class="pm-icon">📱</div>
+          <div class="pm-info"><h4>Apple Pay</h4><p>Touch ID or Face ID</p></div>
+          <div class="radio-dot" style="border-color:var(--gray-300);"><div style="display:none;"></div></div>
+        </div>
+      </div>
+
+      <div style="padding:16px 16px 4px;">
+        <div style="background:var(--green-light);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:18px;">🔒</span>
+          <span style="font-size:12px;color:var(--green);font-weight:600;">Escrow protected — payment released only after job is complete</span>
+        </div>
+      </div>
+
+      <div style="padding:16px;">
+        <button class="btn btn-primary" onclick="goTo('s-tracking','s-payment')">Confirm & Pay $44.75</button>
+        <p style="text-align:center;font-size:11px;color:var(--gray-400);margin-top:8px;">Secured by Stripe · End-to-end encrypted</p>
+      </div>
+    </div>
+
+    <!-- ─ S7: Rating ─ -->
+    <div class="screen" id="s-rating">
+      <div class="success-banner">
+        <span class="check">✅</span>
+        <h2>Job Complete!</h2>
+        <p>Ahmed finished your oil change in 38 min</p>
+      </div>
+
+      <p class="section-title">Rate Your Experience</p>
+      <div class="card card-body" style="text-align:center;">
+        <div class="mech-avatar" style="background:linear-gradient(135deg,#FF6B35,#FF9A6C);width:60px;height:60px;font-size:24px;margin:0 auto 8px;">AK</div>
+        <h3 style="font-size:16px;font-weight:700;">Ahmed Khan</h3>
+        <p style="font-size:13px;color:var(--gray-400);margin-top:2px;">How was your service?</p>
+        <div class="star-rating" id="star-rating">
+          <span class="star-btn lit" onclick="rateStar(1)">★</span>
+          <span class="star-btn lit" onclick="rateStar(2)">★</span>
+          <span class="star-btn lit" onclick="rateStar(3)">★</span>
+          <span class="star-btn lit" onclick="rateStar(4)">★</span>
+          <span class="star-btn lit" onclick="rateStar(5)">★</span>
+        </div>
+        <p style="font-size:13px;font-weight:600;color:var(--orange);margin-bottom:10px;">Excellent!</p>
+        <textarea class="review-input" placeholder="Share details about your experience (optional)...">Arrived on time, super professional. Fixed everything quickly. Will book again!</textarea>
+      </div>
+
+      <p class="section-title">Quick Feedback</p>
+      <div class="card card-body">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span class="filter-chip active" style="font-size:12px;" onclick="toggleChip(this)">👍 On time</span>
+          <span class="filter-chip active" style="font-size:12px;" onclick="toggleChip(this)">🔧 Expert work</span>
+          <span class="filter-chip active" style="font-size:12px;" onclick="toggleChip(this)">💬 Communicative</span>
+          <span class="filter-chip" style="font-size:12px;" onclick="toggleChip(this)">🧹 Clean & tidy</span>
+          <span class="filter-chip" style="font-size:12px;" onclick="toggleChip(this)">💰 Fair price</span>
+        </div>
+      </div>
+
+      <div style="padding:16px;margin-bottom:8px;display:flex;flex-direction:column;gap:8px;">
+        <button class="btn btn-primary" onclick="goTo('s-home','s-rating');showToast('🙏','Thanks for your review! Ahmed has been notified.')">Submit Review</button>
+        <button class="btn btn-outline" style="color:var(--gray-400);border-color:var(--gray-200);" onclick="goTo('s-home','s-rating')">Skip</button>
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- Bottom Navigation -->
+  <div class="bottom-nav" id="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="navTo('s-home','nav-home')">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-item" id="nav-book" onclick="navTo('s-book','nav-book')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      <span>Book</span>
+    </div>
+    <div class="nav-item" id="nav-track" onclick="navTo('s-tracking','nav-track')">
+      <svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+      <span>Track</span>
+    </div>
+    <div class="nav-item" id="nav-msgs" onclick="showToast('💬','Inbox — 2 unread messages from Ahmed')">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span>Messages</span>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="showToast('👤','Profile & Settings')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toast-icon">🔔</span>
+    <span id="toast-msg">Notification</span>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+  let history = ['s-splash'];
+
+  function goTo(toId, fromId) {
+    const from = document.getElementById(fromId);
+    const to   = document.getElementById(toId);
+    if (!to || !from) return;
+    from.classList.remove('active');
+    from.classList.add('prev');
+    to.classList.add('active');
+    to.scrollTop = 0;
+    history.push(toId);
+    updateNav(toId);
+    setTimeout(() => from.classList.remove('prev'), 400);
+  }
+
+  function goBack(toId) {
+    const cur = history[history.length - 1];
+    history.pop();
+    const from = document.getElementById(cur);
+    const to   = document.getElementById(toId);
+    if (!from || !to) return;
+    // Reverse animation
+    to.style.transform = 'translateX(-100%)';
+    to.classList.add('active');
+    to.scrollTop = 0;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        to.style.transform = '';
+        from.classList.remove('active');
+        from.style.transform = 'translateX(100%)';
+        setTimeout(() => { from.style.transform = ''; }, 400);
+      });
+    });
+    updateNav(toId);
+  }
+
+  function navTo(screenId, navId) {
+    const cur = history[history.length - 1];
+    if (cur === screenId) return;
+    goTo(screenId, cur);
+    // update history cleanly
+    history = [screenId];
+    updateNav(screenId);
+  }
+
+  function updateNav(screenId) {
+    const map = {'s-home':'nav-home','s-book':'nav-book','s-tracking':'nav-track'};
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navId = map[screenId];
+    if (navId) document.getElementById(navId)?.classList.add('active');
+  }
+
+  function selService(el) {
+    document.querySelectorAll('.service-chip').forEach(c => c.classList.remove('sel'));
+    el.classList.add('sel');
+  }
+
+  function activateChip(el) {
+    el.closest('.filter-row').querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleChip(el) {
+    el.classList.toggle('active');
+  }
+
+  let toastTimer;
+  function showToast(icon, msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-icon').textContent = icon;
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function rateStar(n) {
+    document.querySelectorAll('.star-btn').forEach((s, i) => {
+      s.classList.toggle('lit', i < n);
+    });
+    const labels = ['','Poor','Fair','Good','Great','Excellent!'];
+    document.querySelector('#s-rating .card-body p:last-of-type') &&
+      (document.querySelectorAll('#s-rating .card-body p')[1].textContent = labels[n]);
+  }
+</script>
+</body>
+</html>
