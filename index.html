@@ -945,6 +945,162 @@
       </div>
     </div>
 
+
+    <!-- ─ S8: Messages ─ -->
+    <div class="screen" id="s-messages">
+      <div class="screen-header">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div><h1>Messages</h1><p>2 unread conversations</p></div>
+          <span style="background:var(--orange);color:white;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;">2 New</span>
+        </div>
+      </div>
+      <p class="section-title">Recent</p>
+      <div class="card" style="margin-bottom:12px;">
+        <div onclick="goTo('s-chat','s-messages')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--blue-light);">
+          <div style="position:relative;flex-shrink:0;">
+            <div class="mech-avatar" style="background:linear-gradient(135deg,#FF6B35,#FF9A6C);width:50px;height:50px;font-size:19px;">AK</div>
+            <span style="position:absolute;bottom:0;right:0;width:13px;height:13px;background:var(--green);border-radius:50%;border:2px solid white;display:block;"></span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;"><span style="font-size:14px;font-weight:700;color:var(--gray-900);">Ahmed Khan</span><span style="font-size:11px;color:var(--blue);font-weight:600;">2 min ago</span></div>
+            <p style="font-size:13px;color:var(--gray-700);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;">I'm on my way! Should arrive in about 8 min 🔧</p>
+            <div style="display:flex;gap:6px;margin-top:4px;align-items:center;"><span class="badge badge-blue" style="font-size:10px;">Oil Change</span><span style="width:8px;height:8px;background:var(--blue);border-radius:50%;"></span></div>
+          </div>
+        </div>
+        <div onclick="goTo('s-chat','s-messages')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;background:var(--blue-light);">
+          <div style="position:relative;flex-shrink:0;">
+            <div class="mech-avatar" style="background:linear-gradient(135deg,#1E7BF5,#60B0FF);width:50px;height:50px;font-size:19px;">RS</div>
+            <span style="position:absolute;bottom:0;right:0;width:13px;height:13px;background:var(--orange);border-radius:50%;border:2px solid white;display:block;"></span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;"><span style="font-size:14px;font-weight:700;color:var(--gray-900);">Raza Sheikh</span><span style="font-size:11px;color:var(--blue);font-weight:600;">1 hr ago</span></div>
+            <p style="font-size:13px;color:var(--gray-700);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;">Your brake job is confirmed for tomorrow 10am ✅</p>
+            <div style="display:flex;gap:6px;margin-top:4px;align-items:center;"><span class="badge badge-orange" style="font-size:10px;">Brakes</span><span style="width:8px;height:8px;background:var(--blue);border-radius:50%;"></span></div>
+          </div>
+        </div>
+        <div onclick="goTo('s-chat','s-messages')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;">
+          <div style="position:relative;flex-shrink:0;">
+            <div class="mech-avatar" style="background:linear-gradient(135deg,#8B5CF6,#A78BFA);width:50px;height:50px;font-size:19px;">FM</div>
+            <span style="position:absolute;bottom:0;right:0;width:13px;height:13px;background:var(--green);border-radius:50%;border:2px solid white;display:block;"></span>
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;justify-content:space-between;"><span style="font-size:14px;font-weight:600;color:var(--gray-700);">Fahad Mirza</span><span style="font-size:11px;color:var(--gray-400);">Yesterday</span></div>
+            <p style="font-size:13px;color:var(--gray-400);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Thanks for the 5-star review! 🙏</p>
+            <span class="badge badge-green" style="font-size:10px;margin-top:4px;">Completed</span>
+          </div>
+        </div>
+      </div>
+      <p class="section-title">Support</p>
+      <div class="card" style="margin-bottom:12px;">
+        <div onclick="showToast('🛡️','Connecting to MechConnect support...')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;">
+          <div style="width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#60B0FF);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🛡️</div>
+          <div style="flex:1;"><h4 style="font-size:14px;font-weight:700;color:var(--gray-900);">MechConnect Support</h4><p style="font-size:12px;color:var(--gray-500);margin-top:2px;">Avg. reply: under 5 minutes</p></div>
+          <span style="color:var(--gray-400);">→</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─ S9: Chat ─ -->
+    <div class="screen" id="s-chat">
+      <div style="background:var(--white);padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--gray-200);position:sticky;top:0;z-index:10;">
+        <button class="back-btn" onclick="goBack('s-messages')">←</button>
+        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF9A6C);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:white;flex-shrink:0;">AK</div>
+        <div style="flex:1;"><h2 style="font-size:15px;font-weight:700;color:var(--gray-900);">Ahmed Khan</h2><p style="font-size:11px;color:var(--green);font-weight:600;"><span class="live-dot"></span>Online · Mechanic</p></div>
+        <button class="pill" style="width:auto;padding:8px 12px;font-size:12px;" onclick="showToast('📞','Calling Ahmed (masked)...')">📞 Call</button>
+      </div>
+      <div style="background:var(--blue-light);padding:10px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #b3d4ff;">
+        <span style="font-size:16px;">🔧</span>
+        <div><p style="font-size:12px;font-weight:700;color:var(--blue);">Oil Change · In Progress</p><p style="font-size:11px;color:var(--gray-500);">Live tracking available</p></div>
+        <button onclick="goTo('s-tracking','s-chat')" style="margin-left:auto;background:var(--blue);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;">Track</button>
+      </div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <div style="text-align:center;"><span style="font-size:11px;color:var(--gray-400);background:var(--gray-100);padding:4px 12px;border-radius:20px;">Today</span></div>
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF9A6C);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;">AK</div>
+          <div><div style="background:var(--white);border-radius:16px 16px 16px 4px;padding:10px 14px;max-width:220px;box-shadow:var(--shadow);"><p style="font-size:13px;color:var(--gray-900);line-height:1.5;">Hi John! Confirmed your oil change. Getting tools ready 🔧</p></div><p style="font-size:10px;color:var(--gray-400);margin-top:3px;margin-left:4px;">9:30 AM</p></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+          <div><div style="background:var(--blue);border-radius:16px 16px 4px 16px;padding:10px 14px;max-width:220px;"><p style="font-size:13px;color:white;line-height:1.5;">Great! Ring the doorbell when you arrive.</p></div><p style="font-size:10px;color:var(--gray-400);margin-top:3px;text-align:right;">9:32 AM ✓✓</p></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF9A6C);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;">AK</div>
+          <div><div style="background:var(--white);border-radius:16px 16px 16px 4px;padding:10px 14px;max-width:230px;box-shadow:var(--shadow);"><p style="font-size:13px;color:var(--gray-900);line-height:1.5;">5W-30 full synthetic as requested. See you soon 👍</p></div><p style="font-size:10px;color:var(--gray-400);margin-top:3px;margin-left:4px;">9:33 AM</p></div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF9A6C);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;flex-shrink:0;">AK</div>
+          <div><div style="background:var(--white);border-radius:16px 16px 16px 4px;padding:10px 14px;max-width:230px;box-shadow:var(--shadow);"><p style="font-size:13px;color:var(--gray-900);line-height:1.5;">I'm on my way! <strong>8 minutes</strong> away 🔧</p></div><p style="font-size:10px;color:var(--gray-400);margin-top:3px;margin-left:4px;">9:41 AM · just now</p></div>
+        </div>
+      </div>
+      <div style="background:var(--white);border-top:1px solid var(--gray-200);padding:10px 12px;display:flex;align-items:center;gap:8px;position:sticky;bottom:0;">
+        <button onclick="showToast('📎','Attach photo or file')" style="width:36px;height:36px;border-radius:50%;background:var(--gray-100);border:none;cursor:pointer;font-size:16px;">📎</button>
+        <div style="flex:1;background:var(--gray-100);border-radius:22px;padding:10px 16px;font-size:13px;color:var(--gray-500);cursor:text;" onclick="showToast('⌨️','Type your message here...')">Type a message…</div>
+        <button onclick="showToast('✉️','Message sent to Ahmed!')" style="width:38px;height:38px;border-radius:50%;background:var(--blue);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 24 24" fill="white" width="16" height="16"><polygon points="22 2 11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ─ S10: User Profile ─ -->
+    <div class="screen" id="s-userprofile">
+      <div style="background:linear-gradient(135deg,var(--navy) 0%,#1a3a5c 100%);padding:24px 20px 28px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <span style="font-size:16px;font-weight:700;color:white;">My Profile</span>
+          <button onclick="showToast('⚙️','Opening settings...')" style="background:rgba(255,255,255,.12);border:none;border-radius:8px;padding:6px 12px;color:white;font-size:12px;font-weight:600;cursor:pointer;">⚙️ Settings</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#60B0FF);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:white;border:3px solid rgba(255,255,255,.3);flex-shrink:0;">JD</div>
+          <div>
+            <h2 style="font-size:20px;font-weight:800;color:white;">John Doe</h2>
+            <p style="font-size:13px;color:#94B8D8;margin-top:2px;">john.doe@email.com</p>
+            <p style="font-size:12px;color:#94B8D8;margin-top:2px;">📍 Karachi, Sindh</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);background:rgba(255,255,255,.08);border-radius:12px;margin-top:16px;overflow:hidden;">
+          <div style="padding:10px;text-align:center;border-right:1px solid rgba(255,255,255,.1);"><div style="font-size:18px;font-weight:800;color:white;">12</div><div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;">Jobs Booked</div></div>
+          <div style="padding:10px;text-align:center;border-right:1px solid rgba(255,255,255,.1);"><div style="font-size:18px;font-weight:800;color:#FFD580;">$480</div><div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;">Total Spent</div></div>
+          <div style="padding:10px;text-align:center;"><div style="font-size:18px;font-weight:800;color:var(--green);">4.9★</div><div style="font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;">Avg Rating Given</div></div>
+        </div>
+      </div>
+      <p class="section-title">My Vehicles</p>
+      <div class="card" style="margin-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);">
+          <span style="font-size:26px;">🚗</span>
+          <div style="flex:1;"><h4 style="font-size:14px;font-weight:700;">2021 Toyota Corolla</h4><p style="font-size:12px;color:var(--gray-500);">VIN: 1HGBH41JX... · Silver</p></div>
+          <span class="badge badge-blue">Primary</span>
+        </div>
+        <div onclick="showToast('🚙','Add a new vehicle')" style="display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;">
+          <span style="font-size:20px;">➕</span><span style="font-size:14px;color:var(--blue);font-weight:600;">Add Vehicle</span>
+        </div>
+      </div>
+      <p class="section-title">Service History</p>
+      <div class="card" style="margin-bottom:4px;">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--gray-100);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div><p style="font-size:14px;font-weight:600;">Oil Change</p><p style="font-size:12px;color:var(--gray-500);">Ahmed Khan · Jun 12, 2026</p></div>
+            <div style="text-align:right;"><p style="font-size:14px;font-weight:700;color:var(--blue);">$55</p><span class="badge badge-green" style="font-size:10px;">✓ Done</span></div>
+          </div>
+        </div>
+        <div style="padding:12px 16px;border-bottom:1px solid var(--gray-100);">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div><p style="font-size:14px;font-weight:600;">Brake Pad Replace</p><p style="font-size:12px;color:var(--gray-500);">Raza Sheikh · May 3, 2026</p></div>
+            <div style="text-align:right;"><p style="font-size:14px;font-weight:700;color:var(--blue);">$95</p><span class="badge badge-green" style="font-size:10px;">✓ Done</span></div>
+          </div>
+        </div>
+        <div onclick="showToast('📋','Loading full service history...')" style="padding:12px 16px;cursor:pointer;text-align:center;">
+          <span style="font-size:13px;color:var(--blue);font-weight:600;">View All History →</span>
+        </div>
+      </div>
+      <p class="section-title">Account</p>
+      <div class="card" style="margin-bottom:16px;">
+        <div onclick="showToast('💳','Opening payment methods...')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;"><span style="font-size:20px;width:32px;text-align:center;">💳</span><span style="flex:1;font-size:14px;font-weight:500;">Payment Methods</span><span style="color:var(--gray-400);">→</span></div>
+        <div onclick="showToast('🔔','Notification preferences')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;"><span style="font-size:20px;width:32px;text-align:center;">🔔</span><span style="flex:1;font-size:14px;font-weight:500;">Notifications</span><div style="width:40px;height:22px;background:var(--blue);border-radius:11px;position:relative;"><div style="width:18px;height:18px;background:white;border-radius:50%;position:absolute;top:2px;right:2px;"></div></div></div>
+        <div onclick="showToast('🔒','Privacy & Security settings')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;"><span style="font-size:20px;width:32px;text-align:center;">🔒</span><span style="flex:1;font-size:14px;font-weight:500;">Privacy & Security</span><span style="color:var(--gray-400);">→</span></div>
+        <div onclick="showToast('🎁','Referral code: JOHN25 — Share & earn $10!')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;"><span style="font-size:20px;width:32px;text-align:center;">🎁</span><span style="flex:1;font-size:14px;font-weight:500;">Refer a Friend</span><span class="badge badge-orange">Earn $10</span></div>
+        <div onclick="showToast('❓','Opening Help Center...')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--gray-100);cursor:pointer;"><span style="font-size:20px;width:32px;text-align:center;">❓</span><span style="flex:1;font-size:14px;font-weight:500;">Help & Support</span><span style="color:var(--gray-400);">→</span></div>
+        <div onclick="showToast('👋','Logging out...')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;"><span style="font-size:20px;width:32px;text-align:center;">🚪</span><span style="flex:1;font-size:14px;font-weight:500;color:var(--red);">Log Out</span></div>
+      </div>
+    </div>
+
   </div><!-- /screens -->
 
   <!-- Bottom Navigation -->
@@ -961,11 +1117,11 @@
       <svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
       <span>Track</span>
     </div>
-    <div class="nav-item" id="nav-msgs" onclick="showToast('💬','Inbox — 2 unread messages from Ahmed')">
+    <div class="nav-item" id="nav-msgs" onclick="navTo('s-messages','nav-msgs')">
       <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       <span>Messages</span>
     </div>
-    <div class="nav-item" id="nav-profile" onclick="showToast('👤','Profile & Settings')">
+    <div class="nav-item" id="nav-profile" onclick="navTo('s-userprofile','nav-profile')">
       <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span>Profile</span>
     </div>
@@ -1026,7 +1182,7 @@
   }
 
   function updateNav(screenId) {
-    const map = {'s-home':'nav-home','s-book':'nav-book','s-tracking':'nav-track'};
+    const map = {'s-home':'nav-home','s-book':'nav-book','s-tracking':'nav-track','s-messages':'nav-msgs','s-chat':'nav-msgs','s-userprofile':'nav-profile'};
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const navId = map[screenId];
     if (navId) document.getElementById(navId)?.classList.add('active');
